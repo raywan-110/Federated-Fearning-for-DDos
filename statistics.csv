@@ -1,0 +1,13 @@
+,type-four-0-150000-samples.csv,type-four-4-150000-samples.csv,type-four-8-150000-samples.csv,type-one-0-150000-samples.csv,type-one-1-150000-samples.csv,type-one-10-150000-samples.csv,type-one-2-150000-samples.csv,type-one-3-150000-samples.csv,type-one-4-150000-samples.csv,type-one-5-150000-samples.csv,type-one-6-150000-samples.csv,type-one-7-150000-samples.csv,type-one-8-150000-samples.csv,type-one-9-150000-samples.csv,type-total-8-150000-samples.csv,type-two-0-150000-samples.csv,type-two-10-150000-samples.csv,type-two-2-150000-samples.csv,type-two-4-150000-samples.csv,type-two-6-150000-samples.csv,type-two-8-150000-samples.csv
+DrDoS_SSDP,75000.0,,,,150000.0,,,,,,,,,,13636,75000.0,,,,,
+DrDoS_NetBIOS,75000.0,,,,,,150000.0,,,,,,,,13636,,,75000.0,,,
+DrDoS_DNS,75000.0,,,,,,,150000.0,,,,,,,13636,,,75000.0,,,
+Syn,75000.0,,,150000.0,,,,,,,,,,,13636,75000.0,,,,,
+BENIGN,6264.0,20035.0,30564.0,392.0,763.0,25247.0,1707.0,3402.0,2157.0,14365.0,2006.0,1507.0,3705.0,1612.0,56863,1155.0,25247.0,5109.0,16522.0,3513.0,5317.0
+DrDoS_UDP,,75000.0,,,,,,,150000.0,,,,,,13636,,,,75000.0,,
+DrDoS_MSSQL,,75000.0,,,,,,,,,150000.0,,,,13636,,,,,75000.0,
+DrDoS_SNMP,,75000.0,,,,,,,,,,150000.0,,,13636,,,,,75000.0,
+DrDoS_NTP,,75000.0,,,,,,,,150000.0,,,,,13636,,,,75000.0,,
+DrDoS_LDAP,,,75000.0,,,,,,,,,,,150000.0,13636,,,,,,75000.0
+UDP-lag,,,75000.0,,,,,,,,,,150000.0,,13636,,,,,,75000.0
+TFTP,,,75000.0,,,150000.0,,,,,,,,,13636,,75000.0,,,,
