@@ -11,7 +11,7 @@ class FLModel(nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        x = self.fc5(x)
-        output = F.log_softmax(x, dim=1)
+        x = self.fc5(x)  # output logits
+        output = F.log_softmax(x, dim=1)  # use NLLLoss(), which accepts a log probability
 
         return output

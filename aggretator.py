@@ -2,7 +2,7 @@ def aggregate_grads(grads, backend):
     """Aggregate model gradients to models.
 
     Args:
-        data: a list of grads' information
+        data: a list of grads' information(dict stracture)
             item format:
                 {
                     'n_samples': xxx,
@@ -23,11 +23,11 @@ def aggregate_grads(grads, backend):
             if k not in total_grads:
                 total_grads[k] = []
 
-            total_grads[k].append(v * n_samples)
+            total_grads[k].append(v * n_samples)  # weighting the grads from users i according to its samples amount
         n_total_samples += n_samples
 
     gradients = {}
     for k, v in total_grads.items():
-        gradients[k] = backend.sum(v, dim=0) / n_total_samples
+        gradients[k] = backend.sum(v, dim=0) / n_total_samples  # is equivalent to SGD for each sample
 
     return gradients

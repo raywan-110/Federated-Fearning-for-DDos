@@ -15,7 +15,7 @@ def random_str(n):
 class ModelBase(ABC):
     def __init__(self, **kwargs):
         for k in kwargs:
-            setattr(self, k, kwargs[k]) # setattr 对属性k赋值
+            setattr(self, k, kwargs[k])  # setattr 对属性k赋值
 
     @abstractmethod
     def update_grads(self, grads):
@@ -70,7 +70,7 @@ class PytorchModel(ModelBase):
                                  self.optim_name)(self.model.parameters(),
                                                   lr=self.lr)
 
-    def update_grads(self, grads): # update the model via grads
+    def update_grads(self, grads):  # method1: update the model via aggregate_grads
         self.optimizer.zero_grad()
 
         for k, v in self.model.named_parameters():
@@ -78,7 +78,7 @@ class PytorchModel(ModelBase):
 
         self.optimizer.step()
 
-    def update_params(self, params):  # update the model via gived parameters
+    def update_params(self, params):  # method2: update the model via gived parameters
 
         for k, v in self.model.named_parameters():
             v[:] = params[k]
@@ -107,7 +107,7 @@ class BaseBackend(ABC):
     def mean(self, data):
         data = np.array(data)
 
-        return data.mean(axis=0) # get mean each column
+        return data.mean(axis=0)  # get mean each column
 
 
 class NumpyBackend(BaseBackend):
@@ -171,7 +171,7 @@ class PytorchBackend(BaseBackend):
 class Aggregator(object):
     def __init__(self, model, backend):
         self.model = model  # the model
-        self.backend = backend # the backend to control
+        self.backend = backend  # the backend to control
 
 
 class FederatedAveragingGrads(Aggregator):

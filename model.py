@@ -20,8 +20,8 @@ class ParameterServer(object):
     def __init__(self, init_model_path, testworkdir):
         self.round = 0
         self.rounds_info = {}
-        self.rounds_model_path = {} # path to the dir of model
-        self.current_round_grads = []
+        self.rounds_model_path = {}  # path to the dir of model
+        self.current_round_grads = []  # a list to store grads
         self.init_model_path = init_model_path
         self.aggr = FederatedAveragingGrads(
             model=PytorchModel(torch=torch,
@@ -45,10 +45,10 @@ class ParameterServer(object):
         return self.rounds_model_path[self.round - 1]
 
     def receive_grads_info(self, grads):
-        self.current_round_grads.append(grads)
+        self.current_round_grads.append(grads)  # grads from each node
 
     def aggregate(self):
-        self.aggr(self.current_round_grads) # update the model in server
+        self.aggr(self.current_round_grads)  # update the model in server
 
         #define the path where the model saved to
         path = os.path.join(self.testworkdir,
@@ -84,7 +84,7 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
         self.log_interval = 10
         self.n_round_samples = 1600
         self.testbase = self.TEST_BASE_DIR
-        self.testworkdir = os.path.join(self.testbase, 'competetion-test')
+        self.testworkdir = os.path.join(self.testbase, 'competetion-test')  # set all the hyperparameters
 
         if not os.path.exists(self.testworkdir):
             os.makedirs(self.testworkdir)
@@ -127,10 +127,10 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                     user_idx=u,
                     n_round=r,
                     n_round_samples=self.n_round_samples)
-                grads = user_round_train(X=x, Y=y, model=model, device=device)
+                grads = user_round_train(X=x, Y=y, model=model, device=device)  # obtain grads from each user
                 self.ps.receive_grads_info(grads=grads)
 
-            self.ps.aggregate()
+            self.ps.aggregate()  # aggregate the gradients and update the model
             print('\nRound {} cost: {}, total training cost: {}'.format(
                 r,
                 datetime.now() - start,
