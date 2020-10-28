@@ -106,8 +106,7 @@ class UserRoundData(object):
             return self._user_datasets[user_idx]
 
         n_samples = len(self._user_datasets[user_idx][1])
-        choices = np.random.choice(n_samples, min(n_samples, n_round_samples))
-
+        choices = np.random.choice(n_samples, min(n_samples, n_round_samples))  # set the sum of selected samples from user "user_idx"
         return self._user_datasets[user_idx][0][choices], self._user_datasets[
             user_idx][1][choices]
 
@@ -124,7 +123,7 @@ class UserRoundData(object):
             X.append(x)
             Y.append(y)
 
-        data = CompDataset(X=np.concatenate(X), Y=np.concatenate(Y))
+        data = CompDataset(X=np.concatenate(X), Y=np.concatenate(Y))  # packaging
         train_loader = torch.utils.data.DataLoader(
             data,
             batch_size=min(batch_size, n_samples),

@@ -8,11 +8,11 @@ def user_round_train(X, Y, model, device, debug=False):
     data = CompDataset(X=X, Y=Y)
     train_loader = torch.utils.data.DataLoader(
         data,
-        batch_size=320,
+        batch_size=320,  # modify it so that every nodes just train one epoch
         shuffle=True,
     )
 
-    model.train() # set the model as train status
+    model.train()  # set the model as train status
 
     correct = 0
     prediction = []
