@@ -22,7 +22,13 @@ for root, dirs, fnames in os.walk('./train'):
         print('table is:')
         print(table)
     table.columns = fnames
+    table = table.T
+    table.fillna(value=0,inplace=True)
+    # print(table)
+    table.loc[:, 'Sum'] = table.apply(lambda x: x.sum(), axis=1)
+    table.astype(int)
+    # print(table)
+print('***** end *****')
+table.replace(0,np.nan,inplace=True)
+table.to_csv('statistics.csv')
 print(table)
-print('*****end*****')
-table.fillna(None)
-table.T.to_csv('statistics.csv')
