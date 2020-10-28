@@ -1,17 +1,27 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 # junk model!
 class FLModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(79, 256)
-        self.fc5 = nn.Linear(256, 14)
+        self.net = nn.Sequential(nn.Linear(79, 128),
+                                 nn.BatchNorm1d(128),
+                                 nn.ReLU(),
+                                 nn.Linear(128, 256),
+                                 nn.BatchNorm1d(256),
+                                 nn.ReLU(),
+                                 nn.Linear(256, 512),
+                                 nn.BatchNorm1d(512),
+                                 nn.ReLU(),
+                                 nn.Linear(512, 512),
+                                 nn.BatchNorm1d(512),
+                                 nn.ReLU(),
+                                 nn.Linear(512, 14))  # 5 layers
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.fc5(x)  # output logits
+        x = self.net(x)
         output = F.log_softmax(x, dim=1)  # use NLLLoss(), which accepts a log probability
 
         return output
