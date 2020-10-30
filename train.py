@@ -25,6 +25,7 @@ def user_round_train(X, Y, model, device, debug=False):
         # ipdb.set_trace()
         # print(data.shape, target.shape)
         output = model(data)
+        target = target.long()  # add later
         loss = F.nll_loss(output, target)
         total_loss += loss
         loss.backward()

@@ -72,7 +72,7 @@ class ParameterServer(object):
 class FedAveragingGradsTestSuit(unittest.TestCase):
     RESULT_DIR = 'result'
     N_VALIDATION = 10000
-    TEST_BASE_DIR = '/tmp/'
+    TEST_BASE_DIR = './tmp/'
 
     def setUp(self):
         self.seed = 0
@@ -137,7 +137,7 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                 datetime.now() - training_start,
             ))
 
-            if model is not None and r % 200 == 0:
+            if model is not None and r % 10 == 0:
                 self.predict(model,
                              device,
                              self.urd.uniform_random_loader(self.N_VALIDATION),

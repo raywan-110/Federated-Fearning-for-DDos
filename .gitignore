@@ -1,2 +1,7 @@
 .vscode
 log.md
+/.idea/
+/__pycache__/
+/result/
+/train/
+/tmp/
