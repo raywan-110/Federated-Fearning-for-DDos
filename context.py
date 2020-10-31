@@ -35,7 +35,7 @@ class PytorchModel(ModelBase):
                  torch,
                  model_class,
                  init_model_path: str = '',  # 变量注释，没啥用处
-                 lr: float = 0.01,
+                 lr: float = 0.001,
                  optim_name: str = 'Adam',
                  cuda: bool = False):
         """Pytorch 封装.
@@ -188,7 +188,7 @@ class FederatedAveragingGrads(Aggregator):
 
         super().__init__(model, backend)
 
-    def aggregate_grads(self, grads):
+    def aggregate_grads(self, grads, leader=-1):
         """Aggregate model gradients to models.
 
         Args:
@@ -199,9 +199,12 @@ class FederatedAveragingGrads(Aggregator):
                         'named_grads': xxx,
                     }
         """
+        bias = [1 for n in range(len(grads))] # for each member has differ bias
+        if leader != -1:
+            bias[leader] = int(len(grads))
         self.backend.update_grads(self.model,
                                   grads=aggregate_grads(grads=grads,
-                                                        backend=self.backend))
+                                                        backend=self.backend,bias=bias))
 
     def save_model(self, path):
         return self.backend.save_model(self.model, path=path)
@@ -211,7 +214,7 @@ class FederatedAveragingGrads(Aggregator):
                                        path=path,
                                        force_reload=force_reload)
 
-    def __call__(self, grads):
+    def __call__(self, grads, leader=-1):
         """Aggregate grads.
 
         Args:
@@ -227,4 +230,4 @@ class FederatedAveragingGrads(Aggregator):
 
         actual_grads = grads
 
-        return self.aggregate_grads(grads=actual_grads)
+        return self.aggregate_grads(grads=actual_grads,leader=leader)
