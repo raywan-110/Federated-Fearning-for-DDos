@@ -1,2 +1,6 @@
 .vscode
 log.md
+*.pyc
+*.ipynb
+train
+*.yml
