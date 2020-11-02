@@ -120,7 +120,7 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
             path = self.ps.get_latest_model()
             start = datetime.now()
             for u in range(0, self.n_users):
-                model = FLModel()
+                model = FLModel()  # in a round, each user uses the same model 
                 model.load_state_dict(torch.load(path))
                 model = model.to(device)
                 x, y = self.urd.round_data(
@@ -131,18 +131,24 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                 self.ps.receive_grads_info(grads=grads)
 
             self.ps.aggregate()  # aggregate the gradients and update the model
+            '''
             print('\nRound {} cost: {}, total training cost: {}'.format(
                 r,
                 datetime.now() - start,
                 datetime.now() - training_start,
             ))
-
+            '''
             if model is not None and r % 200 == 0:
                 self.predict(model,
                              device,
                              self.urd.uniform_random_loader(self.N_VALIDATION),
                              prefix="Train")
                 self.save_testdata_prediction(model=model, device=device)
+                print('\nRound {} cost: {}, total training cost: {}'.format(
+                    r,
+                    datetime.now() - start,
+                    datetime.now() - training_start,
+                ))
 
         if model is not None:
             self.save_testdata_prediction(model=model, device=device)

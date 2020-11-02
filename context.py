@@ -69,6 +69,8 @@ class PytorchModel(ModelBase):
         self.optimizer = getattr(self.torch.optim,
                                  self.optim_name)(self.model.parameters(),
                                                   lr=self.lr)
+        # 加上学习率衰减
+        self.LRscheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer,T_max=200)
 
     def update_grads(self, grads):  # method1: update the model via aggregate_grads
         self.optimizer.zero_grad()
@@ -77,6 +79,8 @@ class PytorchModel(ModelBase):
             v.grad = grads[k].type(v.dtype)
 
         self.optimizer.step()
+        self.LRscheduler.step()
+        # print(self.optimizer.state_dict()['param_groups'][0]['lr'])
 
     def update_params(self, params):  # method2: update the model via gived parameters
 
