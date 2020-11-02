@@ -64,7 +64,6 @@ class UserRoundData(object):
         print('Load User Data: ', os.path.basename(fpath))
         data = pd.read_csv(fpath, skipinitialspace=True, low_memory=False)
         x = extract_features(data)
-        x = preprocessing.scale(x)
         y = np.array([
             self.attack_types[t.split('_')[-1].replace('-', '').lower()]
             for t in data.iloc[:, -1]
@@ -73,6 +72,7 @@ class UserRoundData(object):
         x = x.to_numpy().astype(np.float32)
         x[x == np.inf] = 1.
         x[np.isnan(x)] = 0.
+        x = preprocessing.scale(x)
         return (
             x,
             y,
@@ -138,7 +138,7 @@ class UserRoundData(object):
 def get_test_loader(batch_size=1000):
     with open(TESTDATA_PATH, 'rb') as fin:
         data = pickle.load(fin)
-
+        data['X'] = preprocessing(data['X'])  # normalize the data
     test_loader = torch.utils.data.DataLoader(
         data['X'],
         batch_size=batch_size,
