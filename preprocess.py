@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.utils.data
+from sklearn import preprocessing
 
 TRAINDATA_DIR = './train/'
 TESTDATA_PATH = './test/testing-X.pkl'
@@ -63,6 +64,7 @@ class UserRoundData(object):
         print('Load User Data: ', os.path.basename(fpath))
         data = pd.read_csv(fpath, skipinitialspace=True, low_memory=False)
         x = extract_features(data)
+        x = preprocessing.scale(x)
         y = np.array([
             self.attack_types[t.split('_')[-1].replace('-', '').lower()]
             for t in data.iloc[:, -1]
