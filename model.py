@@ -120,17 +120,18 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
             path = self.ps.get_latest_model()
             start = datetime.now()
             for u in range(0, self.n_users):
-                model = FLModel()  # in a round, each user uses the same model 
+                model = FLModel()
                 model.load_state_dict(torch.load(path))
                 model = model.to(device)
                 x, y = self.urd.round_data(
                     user_idx=u,
                     n_round=r,
                     n_round_samples=self.n_round_samples)
-                grads = user_round_train(X=x, Y=y, model=model, device=device)  # obtain grads from each user
+                grads = user_round_train(user=u, X=x, Y=y, model=model, device=device)  # obtain grads from each user
                 self.ps.receive_grads_info(grads=grads)
 
             self.ps.aggregate()  # aggregate the gradients and update the model
+            print('**************** round:',r,' ****************')
             '''
             print('\nRound {} cost: {}, total training cost: {}'.format(
                 r,
@@ -138,17 +139,17 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                 datetime.now() - training_start,
             ))
             '''
-            if model is not None and r % 200 == 0:
-                self.predict(model,
-                             device,
-                             self.urd.uniform_random_loader(self.N_VALIDATION),
-                             prefix="Train")
-                self.save_testdata_prediction(model=model, device=device)
+            if model is not None and r % 5 == 0:
                 print('\nRound {} cost: {}, total training cost: {}'.format(
                     r,
                     datetime.now() - start,
                     datetime.now() - training_start,
                 ))
+                self.predict(model,
+                             device,
+                             self.urd.uniform_random_loader(self.N_VALIDATION),
+                             prefix="Train")
+                # self.save_testdata_prediction(model=model, device=device)
 
         if model is not None:
             self.save_testdata_prediction(model=model, device=device)
@@ -181,12 +182,12 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                 data, target = data.to(device), target.to(device)
                 output = model(data)
                 test_loss += F.nll_loss(
-                    output, target,
+                    output, target.long(),
                     reduction='sum').item()  # sum up batch loss
                 pred = output.argmax(
                     dim=1,
                     keepdim=True)  # get the index of the max log-probability
-                correct += pred.eq(target.view_as(pred)).sum().item()
+                correct += pred.eq(target.view_as(pred).long()).sum().item()
                 prediction.extend(pred.reshape(-1).tolist())
                 real.extend(target.reshape(-1).tolist())
 

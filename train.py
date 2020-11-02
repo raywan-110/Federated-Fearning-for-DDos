@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from preprocess import CompDataset
 
 
-def user_round_train(X, Y, model, device, debug=False):
+def user_round_train(user, X, Y, model, device, debug=True):
     data = CompDataset(X=X, Y=Y)
     train_loader = torch.utils.data.DataLoader(
         data,
@@ -25,12 +25,12 @@ def user_round_train(X, Y, model, device, debug=False):
         # ipdb.set_trace()
         # print(data.shape, target.shape)
         output = model(data)
-        loss = F.nll_loss(output, target)
+        loss = F.nll_loss(output, target.long())
         total_loss += loss
         loss.backward()
         pred = output.argmax(
             dim=1, keepdim=True)  # get the index of the max log-probability
-        correct += pred.eq(target.view_as(pred)).sum().item()
+        correct += pred.eq(target.view_as(pred).long()).sum().item()
         prediction.extend(pred.reshape(-1).tolist())
         real.extend(target.reshape(-1).tolist())
 
@@ -39,7 +39,7 @@ def user_round_train(X, Y, model, device, debug=False):
         grads['named_grads'][name] = param.grad.detach().cpu().numpy()
 
     if debug:
-        print('Training Loss: {:<10.2f}, accuracy: {:<8.2f}'.format(
+        print('user:',user,' Training Loss: {:<10.2f}, accuracy: {:<8.2f}'.format(
             total_loss, 100. * correct / len(train_loader.dataset)))
 
     return grads
