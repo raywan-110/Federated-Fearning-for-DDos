@@ -4,16 +4,16 @@ import torch.nn.functional as F
 from preprocess import CompDataset
 
 
-def user_round_train(user, X, Y, model, device, debug=True):
+def user_round_train(user, X, Y, model, device, debug=False):
     data = CompDataset(X=X, Y=Y)
     train_loader = torch.utils.data.DataLoader(
         data,
         batch_size=1600,  # modify it so that every nodes just train one epoch
         shuffle=True,
     )
-
+    label_num = len(set(Y))  # calculate the label numbers of this user
+    # print('user:',user,' label numbers:',label_num)
     model.train()  # set the model as train status
-
     correct = 0
     prediction = []
     real = []
@@ -34,7 +34,7 @@ def user_round_train(user, X, Y, model, device, debug=True):
         prediction.extend(pred.reshape(-1).tolist())
         real.extend(target.reshape(-1).tolist())
 
-    grads = {'n_samples': data.shape[0], 'named_grads': {}}
+    grads = {'label_nums': label_num,'n_samples': data.shape[0], 'named_grads': {}}  # add the label_nums to the dict
     for name, param in model.named_parameters():
         grads['named_grads'][name] = param.grad.detach().cpu().numpy()
 
