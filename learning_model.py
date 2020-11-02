@@ -7,16 +7,12 @@ class FLModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.net = nn.Sequential(nn.Linear(79, 128),
-                                 nn.BatchNorm1d(128),
                                  nn.ReLU(),
                                  nn.Linear(128, 256),
-                                 nn.BatchNorm1d(256),
                                  nn.ReLU(),
                                  nn.Linear(256, 512),
-                                 nn.BatchNorm1d(512),
                                  nn.ReLU(),
                                  nn.Linear(512, 512),
-                                 nn.BatchNorm1d(512),
                                  nn.ReLU(),
                                  nn.Linear(512, 14))  # 5 layers
 
