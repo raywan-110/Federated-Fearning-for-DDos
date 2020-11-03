@@ -138,7 +138,7 @@ class UserRoundData(object):
 def get_test_loader(batch_size=1000):
     with open(TESTDATA_PATH, 'rb') as fin:
         data = pickle.load(fin)
-        data['X'] = preprocessing(data['X'])  # normalize the data
+        data['X'] = preprocessing.scale(data['X'])  # normalize the data
     test_loader = torch.utils.data.DataLoader(
         data['X'],
         batch_size=batch_size,
