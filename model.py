@@ -82,12 +82,12 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
     def setUp(self):
         self.seed = 0
         self.use_cuda = False
-        self.batch_size = 1600
+        self.batch_size = 6400
         self.test_batch_size = 1000
         self.lr = 0.001
-        self.n_max_rounds = 100
+        self.n_max_rounds = 200
         self.log_interval = 10
-        self.n_round_samples = 1600
+        self.n_round_samples = 6400
         self.testbase = self.TEST_BASE_DIR
         self.testworkdir = os.path.join(self.testbase, 'competetion-test')  # set all the hyperparameters
 
@@ -150,12 +150,14 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                     datetime.now() - start,
                     datetime.now() - training_start,
                 ))
-                self.predict(model,
+                acc = self.predict(model,
                              device,
                              self.urd.uniform_random_loader(self.N_VALIDATION),
                              prefix="Train")
                 if system() != 'Windows':
                     self.save_testdata_prediction(model=model, device=device)
+                if acc > 93:
+                    break
 
         if model is not None:
             if system() != 'Windows':
@@ -204,6 +206,7 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
         print(
             '{} set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
                 prefix, test_loss, correct, len(test_loader.dataset), acc), )
+        return acc
 
 
 def suite():
