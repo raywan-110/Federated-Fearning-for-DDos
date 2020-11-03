@@ -14,10 +14,11 @@ from learning_model import FLModel
 from preprocess import get_test_loader
 from preprocess import UserRoundData
 from train import user_round_train
+from platform import system
 
 
 class ParameterServer(object):
-    def __init__(self, init_model_path, testworkdir):
+    def __init__(self, init_model_path, testworkdir,lr=0.001):
         self.round = 0
         self.rounds_info = {}
         self.rounds_model_path = {}  # path to the dir of model
@@ -26,6 +27,7 @@ class ParameterServer(object):
         self.aggr = FederatedAveragingGrads(
             model=PytorchModel(torch=torch,
                                model_class=FLModel,
+                               lr=lr,
                                init_model_path=self.init_model_path,
                                optim_name='Adam'),
             framework='pytorch',
@@ -72,15 +74,18 @@ class ParameterServer(object):
 class FedAveragingGradsTestSuit(unittest.TestCase):
     RESULT_DIR = 'result'
     N_VALIDATION = 10000
-    TEST_BASE_DIR = '/tmp/'
+    if system() == 'Windows':  # for local test
+        TEST_BASE_DIR = './tmp/'
+    else:                      # for cloud platform to test
+        TEST_BASE_DIR = '/tmp/'
 
     def setUp(self):
         self.seed = 0
         self.use_cuda = False
-        self.batch_size = 64
+        self.batch_size = 1600
         self.test_batch_size = 1000
         self.lr = 0.001
-        self.n_max_rounds = 10000
+        self.n_max_rounds = 100
         self.log_interval = 10
         self.n_round_samples = 1600
         self.testbase = self.TEST_BASE_DIR
@@ -96,7 +101,7 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
             torch.save(FLModel().state_dict(), self.init_model_path)
 
         self.ps = ParameterServer(init_model_path=self.init_model_path,
-                                  testworkdir=self.testworkdir)
+                                  testworkdir=self.testworkdir, lr=self.lr)
 
         if not os.path.exists(self.RESULT_DIR):
             os.makedirs(self.RESULT_DIR)
@@ -127,7 +132,7 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                     user_idx=u,
                     n_round=r,
                     n_round_samples=self.n_round_samples)
-                grads = user_round_train(user=u, X=x, Y=y, model=model, device=device)  # obtain grads from each user
+                grads = user_round_train(user=u, X=x, Y=y, model=model, device=device,batch_size=self.batch_size)  # obtain grads from each user
                 self.ps.receive_grads_info(grads=grads)
 
             self.ps.aggregate()  # aggregate the gradients and update the model
@@ -149,10 +154,12 @@ class FedAveragingGradsTestSuit(unittest.TestCase):
                              device,
                              self.urd.uniform_random_loader(self.N_VALIDATION),
                              prefix="Train")
-                # self.save_testdata_prediction(model=model, device=device)
+                if system() != 'Windows':
+                    self.save_testdata_prediction(model=model, device=device)
 
         if model is not None:
-            self.save_testdata_prediction(model=model, device=device)
+            if system() != 'Windows':
+                self.save_testdata_prediction(model=model, device=device)
 
     def save_prediction(self, predition):
         if isinstance(predition, (np.ndarray, )):

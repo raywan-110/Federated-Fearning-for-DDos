@@ -4,11 +4,11 @@ import torch.nn.functional as F
 from preprocess import CompDataset
 
 
-def user_round_train(user, X, Y, model, device, debug=False):
+def user_round_train(user, X, Y, model, device,batch_size=1600, debug=False):
     data = CompDataset(X=X, Y=Y)
     train_loader = torch.utils.data.DataLoader(
         data,
-        batch_size=1600,  # modify it so that every nodes just train one epoch
+        batch_size=batch_size,  # modify it so that every nodes just train one epoch
         shuffle=True,
     )
     label_num = len(set(Y))  # calculate the label numbers of this user

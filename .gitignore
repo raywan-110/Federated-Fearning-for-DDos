@@ -1,7 +1,12 @@
 .vscode
+/.idea/
+/.git/
+/__pycache__/
+/tmp/
+/result/
 log.md
 *.pyc
 *.ipynb
-train
+/train/
 *.yml
 competetion-test
